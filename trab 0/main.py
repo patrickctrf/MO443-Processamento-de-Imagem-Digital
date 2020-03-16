@@ -113,6 +113,27 @@ cv2.waitKey(0)
 
 #===============FIM-da-Questao-1.4==============================================
 
+#===============Questao-1.5=====================================================
+
+# Abrimos as imagens como escala de cinza. Queremos as matrizes de representacao.
+babuinoImagem = cv2.imread("baboon.png", cv2.IMREAD_GRAYSCALE)
+borboletaImagem = cv2.imread("butterfly.png", cv2.IMREAD_GRAYSCALE)
+
+
+
+cv2.imshow("Babuino", babuinoImagem)
+cv2.waitKey(0)
+cv2.imshow("Borboleta", borboletaImagem)
+cv2.waitKey(0)
+cv2.imshow("Babuino02 + Borboleta08", (0.2*babuinoImagem + 0.8*borboletaImagem).astype('uint8'))
+cv2.waitKey(0)
+cv2.imshow("Babuino05 + Borboleta05", (0.5*babuinoImagem + 0.5*borboletaImagem).astype('uint8'))
+cv2.waitKey(0)
+cv2.imshow("Babuino08 + Borboleta02", (0.8*babuinoImagem + 0.2*borboletaImagem).astype('uint8'))
+cv2.waitKey(0)
+
+#===============FIM-da-Questao-1.5==============================================
+
 
 
 
