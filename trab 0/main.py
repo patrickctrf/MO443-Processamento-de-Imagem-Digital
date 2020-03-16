@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from skimage import exposure
 
 #===============Questao-1.1=====================================================
 
@@ -42,5 +43,35 @@ cv2.imshow("Espelhada ao Meio Verticalmente", matrizImagemEspelhada)
 cv2.waitKey(0)
 
 #===============FIM-da-Questao-1.1==============================================
+
+
+#===============Questao-1.2=====================================================
+
+# Abrimos a imagem como escala de cinza. Queremos a matriz de representacao.
+matrizImagem = cv2.imread("baboon.png", cv2.IMREAD_GRAYSCALE)
+
+# A funcao "adjust_gamma" exerce a correção de gamma proposta no roteiro, com a
+# unica diferenca que o scikit-imagem considera gamma elevado a "-1", em relacao
+# ao pedido no roteiro.
+matrizImagemGamma1_5 = exposure.adjust_gamma(matrizImagem, gamma=1/1.5)
+matrizImagemGamma2_5 = exposure.adjust_gamma(matrizImagem, gamma=1/2.5)
+matrizImagemGamma3_5 = exposure.adjust_gamma(matrizImagem, gamma=1/3.5)
+
+cv2.imshow("Gamma 1.0", matrizImagem)
+cv2.waitKey(0)
+cv2.imshow("Gamma 1.5", matrizImagemGamma1_5)
+cv2.waitKey(0)
+cv2.imshow("Gamma 2.5", matrizImagemGamma2_5)
+cv2.waitKey(0)
+cv2.imshow("Gamma 3.5", matrizImagemGamma3_5)
+cv2.waitKey(0)
+
+#===============FIM-da-Questao-1.2==============================================
+
+
+
+
+
+
 
 print(matrizImagem)
