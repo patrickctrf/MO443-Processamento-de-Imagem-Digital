@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from skimage import exposure
 
+
 #===============Questao-1.1=====================================================
 
 # Abrimos a imagem como escala de cinza. Queremos a matriz de representacao.
@@ -68,6 +69,7 @@ cv2.waitKey(0)
 
 #===============FIM-da-Questao-1.2==============================================
 
+
 #===============Questao-1.3=====================================================
 
 # Abrimos a imagem como escala de cinza. Queremos a matriz de representacao.
@@ -78,6 +80,9 @@ matrizImagem = cv2.imread("baboon.png", cv2.IMREAD_GRAYSCALE)
 # normalizamos a matriz resultante: Cada elemento que possui o bit desejado em
 # "1" eh dividido pelo bit de mesmo valor. Assim, a matriz se divide entre zeros
 # e um, formando uma representacao binaria.
+# O OpenCV2 mapeia automaticamente valores no intervalo [0,1] para o intervalo
+# [0,255]. https://docs.opencv.org/2.4/modules/highgui/doc/user_interface.html?highlight=imshow#cv2.imshow
+#
 cv2.imshow("Todos os planos", matrizImagem)
 cv2.waitKey(0)
 cv2.imshow("Plano de bit 0", (matrizImagem & 0b00000001)/0b00000001)
@@ -88,6 +93,25 @@ cv2.imshow("Plano de bit 7", (matrizImagem & 0b10000000)/0b10000000)
 cv2.waitKey(0)
 
 #===============FIM-da-Questao-1.3==============================================
+
+#===============Questao-1.4=====================================================
+
+# Abrimos a imagem como escala de cinza. Queremos a matriz de representacao.
+matrizImagem = cv2.imread("baboon.png", cv2.IMREAD_GRAYSCALE)
+
+matrizImagemMosaico = np.concatenate((
+    np.concatenate((matrizImagem[128:256,128:256], matrizImagem[256:384,256:384], matrizImagem[384:512,0:128], matrizImagem[0:128,256:384]), axis=1),
+    np.concatenate((matrizImagem[128:256,384:512], matrizImagem[384:512,384:512], matrizImagem[0:128,0:128], matrizImagem[256:384,0:128]), axis=1),
+    np.concatenate((matrizImagem[256:384,384:512], matrizImagem[384:512,128:256], matrizImagem[0:128,128:256], matrizImagem[128:256,256:384]), axis=1),
+    np.concatenate((matrizImagem[0:128,384:512], matrizImagem[384:512,256:384], matrizImagem[256:384,128:256], matrizImagem[128:256,0:128]), axis=1)),
+    axis=0)
+
+cv2.imshow("Nao Mosaico", matrizImagem)
+cv2.waitKey(0)
+cv2.imshow("Mosaico", matrizImagemMosaico)
+cv2.waitKey(0)
+
+#===============FIM-da-Questao-1.4==============================================
 
 
 
