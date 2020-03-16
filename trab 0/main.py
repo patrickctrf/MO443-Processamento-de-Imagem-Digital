@@ -68,6 +68,27 @@ cv2.waitKey(0)
 
 #===============FIM-da-Questao-1.2==============================================
 
+#===============Questao-1.3=====================================================
+
+# Abrimos a imagem como escala de cinza. Queremos a matriz de representacao.
+matrizImagem = cv2.imread("baboon.png", cv2.IMREAD_GRAYSCALE)
+
+# Para o plano de cada bit, verificamos se o bit selecionado vale 0 ou 1
+# aplicando uma mascara binaria na respectiva posicao binaria. Em seguida,
+# normalizamos a matriz resultante: Cada elemento que possui o bit desejado em
+# "1" eh dividido pelo bit de mesmo valor. Assim, a matriz se divide entre zeros
+# e um, formando uma representacao binaria.
+cv2.imshow("Todos os planos", matrizImagem)
+cv2.waitKey(0)
+cv2.imshow("Plano de bit 0", (matrizImagem & 0b00000001)/0b00000001)
+cv2.waitKey(0)
+cv2.imshow("Plano de bit 4", (matrizImagem & 0b00010000)/0b00010000)
+cv2.waitKey(0)
+cv2.imshow("Plano de bit 7", (matrizImagem & 0b10000000)/0b10000000)
+cv2.waitKey(0)
+
+#===============FIM-da-Questao-1.3==============================================
+
 
 
 
