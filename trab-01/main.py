@@ -1,7 +1,8 @@
 import cv2
+import numpy as np
 
 
-def change_resolution(original_file_path, resized_file_path="resized-img.png", scale_percent=1):
+def change_resolution(original_file_path, resized_file_path="resized-img.png", scale_percent=100):
     """
 Receives an grayscale image path and saves it back with new resolution scale.
     :param original_file_path: The original file
@@ -28,8 +29,28 @@ Receives an grayscale image path and saves it back with new resolution scale.
     return 0
 
 
+def change_deepth(original_file_path, new_deepth_file_path="deepth-img.png", original_deepth=256, new_deepth=256):
+    try:
+        img = cv2.imread(original_file_path, cv2.IMREAD_GRAYSCALE)
+
+        deepth_img = np.around(np.around((new_deepth - 1) / (original_deepth - 1) * img) / (new_deepth - 1) * (256 - 1)).astype("uint8")
+
+        cv2.imwrite(new_deepth_file_path, deepth_img)
+        cv2.destroyAllWindows()
+    except Exception as e:
+        print("Exception trying to image deepth: ", e)
+        return e
+
+    # If everything is gone fine
+    return 0
+
+
 def main():
+    # 1.1: Resolucao de imagens
     change_resolution("baboon.png", scale_percent=10)
+
+    # 1.2: Profundidade de imagens
+    change_deepth("baboon.png", new_deepth=2)
 
 
 if __name__ == '__main__':
