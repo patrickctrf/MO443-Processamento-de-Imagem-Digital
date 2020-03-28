@@ -104,6 +104,10 @@ Manipulates constrast on grayscale uint8 image.
 
 
 def main():
+    """
+Just executing examples and generating report outputs.
+    """
+
     # 1.1: Resolucao de imagens
     change_resolution("baboon.png", scale_percent=10)
 
