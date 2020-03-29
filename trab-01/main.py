@@ -13,8 +13,8 @@ Receives an grayscale image path and saves it back with new resolution scale.
 
     img = cv2.imread(original_file_path, cv2.IMREAD_GRAYSCALE)
 
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
+    width = int(img.shape[1] * scale_percent // 100)
+    height = int(img.shape[0] * scale_percent // 100)
 
     resized_img = cv2.resize(img, (width, height), interpolation=cv2.INTER_AREA)
 
@@ -105,17 +105,50 @@ Manipulates constrast on grayscale uint8 image.
 
 def main():
     """
-Just executing examples and generating report outputs.
+Executing examples and generating report outputs.
     """
 
-    # 1.1: Resolucao de imagens
-    change_resolution("baboon.png", scale_percent=10)
+    # ==========1.1: Resolucao de imagens=======================================
+    # We are going to reduce image resolution by half until a 2x2 image.
+    # Starting from 512x512 image.
+    current_resolution = 512
 
-    # 1.2: Profundidade de imagens
-    change_deepth("baboon.png", new_deepth=2)
+    # Minimum resolution is 2x2.
+    while current_resolution > 1:
+        change_resolution(
+            original_file_path="baboon.png",
+            output_file_path="resolution:" +
+                             str(current_resolution) +
+                             "x" +
+                             str(current_resolution) +
+                             "Total-Pixels:" + str(current_resolution ** 2) +
+                             ".png",
+            scale_percent=100 * current_resolution / 512
+        )
 
-    # 1.3: Manipulacao de contraste
-    change_contrast("baboon.png", operation="log")
+        current_resolution //= 2
+
+    # ==========1.2: Profundidade de imagens====================================
+    # We are going to reduce image deepth by half until a 2 levels image.
+    # Starting from 512 level image.
+    current_deepth = 256
+
+    # Minimum level is 2.
+    while current_deepth > 1:
+        change_deepth(
+            original_file_path="baboon.png",
+            output_file_path="deepth:" + str(current_deepth) + "level.png",
+            new_deepth=current_deepth
+        )
+
+        current_deepth //= 2
+
+    # ==========1.3: Manipulacao de contraste===================================
+    change_contrast("baboon.png", output_file_path="log-image.png", operation="log")
+    change_contrast("baboon.png", output_file_path="exp-image.png", operation="exp")
+    change_contrast("baboon.png", output_file_path="quad-image.png", operation="quad")
+    change_contrast("baboon.png", output_file_path="sqrt-image.png", operation="sqrt")
+    change_contrast("baboon.png", output_file_path="sigma-image.png", operation="sigma")
 
 
 if __name__ == '__main__':
