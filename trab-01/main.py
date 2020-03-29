@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 
@@ -108,6 +109,9 @@ def main():
 Executing examples and generating report outputs.
     """
 
+    # At first, create a directory for output images.
+    os.mkdir("output/")
+
     # ==========1.1: Resolucao de imagens=======================================
     # We are going to reduce image resolution by half until a 2x2 image.
     # Starting from 512x512 image.
@@ -117,7 +121,7 @@ Executing examples and generating report outputs.
     while current_resolution > 1:
         change_resolution(
             original_file_path="baboon.png",
-            output_file_path="resolution:" +
+            output_file_path="output/resolution:" +
                              str(current_resolution) +
                              "x" +
                              str(current_resolution) +
@@ -137,18 +141,18 @@ Executing examples and generating report outputs.
     while current_deepth > 1:
         change_deepth(
             original_file_path="baboon.png",
-            output_file_path="deepth:" + str(current_deepth) + "level.png",
+            output_file_path="output/deepth:" + str(current_deepth) + "level.png",
             new_deepth=current_deepth
         )
 
         current_deepth //= 2
 
     # ==========1.3: Manipulacao de contraste===================================
-    change_contrast("baboon.png", output_file_path="log-image.png", operation="log")
-    change_contrast("baboon.png", output_file_path="exp-image.png", operation="exp")
-    change_contrast("baboon.png", output_file_path="quad-image.png", operation="quad")
-    change_contrast("baboon.png", output_file_path="sqrt-image.png", operation="sqrt")
-    change_contrast("baboon.png", output_file_path="sigma-image.png", operation="sigma")
+    change_contrast("baboon.png", output_file_path="output/log-image.png", operation="log")
+    change_contrast("baboon.png", output_file_path="output/exp-image.png", operation="exp")
+    change_contrast("baboon.png", output_file_path="output/quad-image.png", operation="quad")
+    change_contrast("baboon.png", output_file_path="output/sqrt-image.png", operation="sqrt")
+    change_contrast("baboon.png", output_file_path="output/sigma-image.png", operation="sigma")
 
 
 if __name__ == '__main__':
