@@ -84,14 +84,10 @@ Manipulates constrast on grayscale uint8 image.
         img = c * np.power(img, 1 / 2)
 
     if operation == "sigma":
-        if img.max() < a:
-            img *= alpha
 
-        elif img.max() < b:
-            img = beta * (img - a) + alpha * a
-
-        else:
-            img = gamma * (img - b) + beta * (b - a) + alpha * a
+        # The operation to be performed depends on each pixel value. We use
+        # numpy "where" function to map each pixel and give the correct operation.
+        img = np.where(img < a, img * alpha, np.where(img < b, beta * (img - a) + alpha * a, gamma * (img - b) + beta * (b - a) + alpha * a))
 
     # Some operations may give bad range values for visualization.
     # I'm normalizing image to range from 0 to 255 again.
@@ -109,8 +105,11 @@ def main():
 Executing examples and generating report outputs.
     """
 
-    # At first, create a directory for output images.
-    os.mkdir("output/")
+    # At first, create a directory for output images (if it does not exist yet).
+    try:
+        os.mkdir("output/")
+    except OSError as error:
+        print(error)
 
     # ==========1.1: Resolucao de imagens=======================================
     # We are going to reduce image resolution by half until a 2x2 image.
