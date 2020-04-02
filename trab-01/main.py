@@ -75,7 +75,9 @@ Manipulates constrast on grayscale uint8 image.
         img = c * np.log(img + 1)
 
     if operation == "exp":
-        img = c * np.exp(img)
+        # The only way to not have an "explosive" exponencial is operating
+        # between 0 and 1.
+        img = c * np.exp(img / img.max())
 
     if operation == "quad":
         img = c * np.power(img, 2)
@@ -110,6 +112,8 @@ Executing examples and generating report outputs.
         os.mkdir("output/")
     except OSError as error:
         print(error)
+        print("O programa detectou que o diretório de saída já existe.",
+              "As imagens foram sobrescritas, mas o programa foi executado com êxito.")
 
     # ==========1.1: Resolucao de imagens=======================================
     # We are going to reduce image resolution by half until a 2x2 image.
