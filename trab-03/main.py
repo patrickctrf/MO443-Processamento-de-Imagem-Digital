@@ -13,7 +13,6 @@ formado por elementos "1". Os elementos fora do raio do circulo valem "0".
     :return: Matriz NxN com um circulo de raio "r" alinhado no meio da matriz e
     formado por elementos "1". Os elementos fora do raio do circulo valem "0".
     """
-
     if r == 0:
         return np.zeros((N, N))
 
@@ -22,11 +21,43 @@ formado por elementos "1". Os elementos fora do raio do circulo valem "0".
     return (np.hypot(rx - x, ry - y) - r < 0.1).astype(int)
 
 
+def get_spectrum_from_img(img):
+    """
+Performs Fourier Fast Transform (FFT) over an given image matrix and returns its
+fourier frequency spectrum.
+    :param img: An image matrix to perform FFT.
+    :return: The respective frequency spectrum.
+    """
+    # Executa FFT em 2 dimensoes
+    f = np.fft.fft2(img)
+    # Desloca a frequencia zero para o centro do espectro
+    fshift = np.fft.fftshift(f)
+
+    return fshift
+
+
+def get_img_from_spectrum(spectrum):
+    """
+Performs Inverse Fourier Transform over a spectrum matrix and returns the
+reconstructed image matrix.
+    :param spectrum:
+    :return: Reconstructed image.
+    """
+    # Retorna a frequencia zero colocada no centro do espectro de volta a
+    # posicao original.
+    f_ishift = np.fft.ifftshift(spectrum)
+    # Realiza FFT inversa
+    img_back = np.fft.ifft2(f_ishift)
+    # Realiza a conversao para valores somente reais
+    img_back = np.abs(img_back)
+
+    return img_back
+
+
 if __name__ == '__main__':
     """
 Executing examples and generating report outputs.
     """
-
     # At first, create a directory for output images (if it does not exist yet).
     try:
         os.mkdir("output/")
@@ -36,13 +67,22 @@ Executing examples and generating report outputs.
 
     mtx_result = circle_into_matrix(0, N=20)
 
-    img = cv2.imread('baboon.png', 0)
-    f = np.fft.fft2(img)
-    fshift = np.fft.fftshift(f)
-    magnitude_spectrum = 20 * np.log(np.abs(fshift))
+    # Abre a imagem original
+    img = cv2.imread("baboon.png", 0)
 
-    plt.subplot(121), plt.imshow(img, cmap='gray')
-    plt.title('Input Image'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122), plt.imshow(magnitude_spectrum, cmap='gray')
-    plt.title('Magnitude Spectrum'), plt.xticks([]), plt.yticks([])
+    # Obtem o espectro de frequencias da imagem original, em valores complexos.
+    spectrum = get_spectrum_from_img(img)
+    # Extrai somente a magnitude retornada da FFT.
+    magnitude_spectrum = 20 * np.log(np.abs(spectrum))
+
+    # Reconstroi a imagem a partir do espectro resultante.
+    img_reconstructed = get_img_from_spectrum(spectrum)
+
+    plt.subplot(131), plt.imshow(img, cmap='gray')
+    plt.title('Imagem\n de \nEntrada'), plt.xticks([]), plt.yticks([])
+    plt.subplot(132), plt.imshow(magnitude_spectrum, cmap='gray')
+    plt.title('Magnitude\n do \nEspectro'), plt.xticks([]), plt.yticks([])
+    plt.subplot(133), plt.imshow(img_reconstructed, cmap='gray')
+    plt.title('Imagem\n Reconstruida'), plt.xticks([]), plt.yticks([])
+    plt.savefig("reconstrucao-da-imagem.png")
     plt.show()
