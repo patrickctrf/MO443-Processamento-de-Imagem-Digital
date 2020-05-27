@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module main</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>main</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/mnt/447acb07-56ed-4e48-842c-bd311a12cf0a/Downloads/MO443-Processamento-de-Imagem-Digital/trab-03/main.py">/mnt/447acb07-56ed-4e48-842c-bd311a12cf0a/Downloads/MO443-Processamento-de-Imagem-Digital/trab-03/main.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="cv2.cv2.html">cv2.cv2</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.pyplot.html">matplotlib.pyplot</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-apply_fourier_filter"><strong>apply_fourier_filter</strong></a>(spectrum, min_db=0, max_db=512)</dt><dd><tt>Dada&nbsp;uma&nbsp;matriz&nbsp;de&nbsp;espectro&nbsp;de&nbsp;entrada,&nbsp;aplica&nbsp;filtro&nbsp;de&nbsp;frequencias&nbsp;2d&nbsp;deixando<br>
+passar&nbsp;frequencias&nbsp;acima&nbsp;do&nbsp;valor&nbsp;minimo&nbsp;e&nbsp;abaixo&nbsp;do&nbsp;valor&nbsp;maximo.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;spectrum:&nbsp;Matriz&nbsp;de&nbsp;espectro&nbsp;com&nbsp;todas&nbsp;as&nbsp;frequencias&nbsp;originais&nbsp;(pode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ser&nbsp;espectro&nbsp;completo&nbsp;ou&nbsp;apenas&nbsp;a&nbsp;magnitude).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;min_db:&nbsp;Frequencia&nbsp;minima&nbsp;a&nbsp;ser&nbsp;passada.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;max_db:&nbsp;Frequencia&nbsp;maxima&nbsp;a&nbsp;ser&nbsp;passada.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:return:&nbsp;A&nbsp;matriz&nbsp;apos&nbsp;a&nbsp;aplicacao&nbsp;do&nbsp;filtro.</tt></dd></dl>
+ <dl><dt><a name="-circle_into_matrix"><strong>circle_into_matrix</strong></a>(r, N=512)</dt><dd><tt>Retorna&nbsp;uma&nbsp;matriz&nbsp;NxN&nbsp;com&nbsp;um&nbsp;circulo&nbsp;de&nbsp;raio&nbsp;"r"&nbsp;alinhado&nbsp;no&nbsp;meio&nbsp;da&nbsp;matriz&nbsp;e<br>
+formado&nbsp;por&nbsp;elementos&nbsp;"1".&nbsp;Os&nbsp;elementos&nbsp;fora&nbsp;do&nbsp;raio&nbsp;do&nbsp;circulo&nbsp;valem&nbsp;"0".<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;r:&nbsp;Raio&nbsp;do&nbsp;circulo&nbsp;centrado&nbsp;na&nbsp;matriz.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;N:&nbsp;Tamanho&nbsp;da&nbsp;matriz&nbsp;a&nbsp;ser&nbsp;retornada.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:return:&nbsp;Matriz&nbsp;NxN&nbsp;com&nbsp;um&nbsp;circulo&nbsp;de&nbsp;raio&nbsp;"r"&nbsp;alinhado&nbsp;no&nbsp;meio&nbsp;da&nbsp;matriz&nbsp;e<br>
+&nbsp;&nbsp;&nbsp;&nbsp;formado&nbsp;por&nbsp;elementos&nbsp;"1".&nbsp;Os&nbsp;elementos&nbsp;fora&nbsp;do&nbsp;raio&nbsp;do&nbsp;circulo&nbsp;valem&nbsp;"0".</tt></dd></dl>
+ <dl><dt><a name="-get_img_from_spectrum"><strong>get_img_from_spectrum</strong></a>(spectrum)</dt><dd><tt>Performs&nbsp;Inverse&nbsp;Fourier&nbsp;Transform&nbsp;over&nbsp;a&nbsp;spectrum&nbsp;matrix&nbsp;and&nbsp;returns&nbsp;the<br>
+reconstructed&nbsp;image&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;spectrum:&nbsp;A&nbsp;matrix&nbsp;containing&nbsp;Fourier&nbsp;spectrum&nbsp;data&nbsp;for&nbsp;a&nbsp;given&nbsp;image<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:return:&nbsp;Reconstructed&nbsp;image.</tt></dd></dl>
+ <dl><dt><a name="-get_spectrum_from_img"><strong>get_spectrum_from_img</strong></a>(img)</dt><dd><tt>Performs&nbsp;Fourier&nbsp;Fast&nbsp;Transform&nbsp;(FFT)&nbsp;over&nbsp;an&nbsp;given&nbsp;image&nbsp;matrix&nbsp;and&nbsp;returns&nbsp;its<br>
+fourier&nbsp;frequency&nbsp;spectrum.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:param&nbsp;img:&nbsp;An&nbsp;image&nbsp;matrix&nbsp;to&nbsp;perform&nbsp;FFT.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:return:&nbsp;The&nbsp;respective&nbsp;frequency&nbsp;spectrum.</tt></dd></dl>
+</td></tr></table>
+</body></html>

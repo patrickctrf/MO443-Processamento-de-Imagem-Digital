@@ -8,10 +8,10 @@ def circle_into_matrix(r, N=512):
     """
 Retorna uma matriz NxN com um circulo de raio "r" alinhado no meio da matriz e
 formado por elementos "1". Os elementos fora do raio do circulo valem "0".
+
     :param r: Raio do circulo centrado na matriz.
     :param N: Tamanho da matriz a ser retornada.
-    :return: Matriz NxN com um circulo de raio "r" alinhado no meio da matriz e
-    formado por elementos "1". Os elementos fora do raio do circulo valem "0".
+    :return: Matriz NxN com um circulo de raio "r" alinhado no meio da matriz e formado por elementos "1". Os elementos fora do raio do circulo valem "0".
     """
     # Como o raio do circulo nao inclui o ponto central, precisamos definir que
     # aquele ponto vale zero se o proprio raio for zero.
@@ -33,6 +33,7 @@ def get_spectrum_from_img(img):
     """
 Performs Fourier Fast Transform (FFT) over an given image matrix and returns its
 fourier frequency spectrum.
+
     :param img: An image matrix to perform FFT.
     :return: The respective frequency spectrum.
     """
@@ -48,7 +49,8 @@ def get_img_from_spectrum(spectrum):
     """
 Performs Inverse Fourier Transform over a spectrum matrix and returns the
 reconstructed image matrix.
-    :param spectrum:
+
+    :param spectrum: A matrix containing Fourier spectrum data for a given image.
     :return: Reconstructed image.
     """
     # Retorna a frequencia zero colocada no centro do espectro de volta a
@@ -66,8 +68,14 @@ def apply_fourier_filter(spectrum, min_db=0, max_db=512):
     """
 Dada uma matriz de espectro de entrada, aplica filtro de frequencias 2d deixando
 passar frequencias acima do valor minimo e abaixo do valor maximo.
-    :param spectrum: Matriz de espectro com todas as frequencias originais (pode
-    ser espectro completo ou apenas a magnitude).
+Para fazer um filtro passa-baixas, o raio minimo deve valer zero e o raio maximo
+deve ser maior que ele. Para um filtro passa-faixa, escolha um raio maximo maior
+que o raio minimo, o qual não deve valer zero. Para um filtro passa-alta, use o
+raio maximo sendo zero e o raio minimo sendo o valor de corte. Para um filtro
+rejeita-faixa, use quaisquer valores diferentes de zero para os raios, desde que
+o minimo seja maior que o maximo.
+
+    :param spectrum: Matriz de espectro com todas as frequencias originais (pode ser espectro completo ou apenas a magnitude).
     :param min_db: Frequencia minima a ser passada.
     :param max_db: Frequencia maxima a ser passada.
     :return: A matriz apos a aplicacao do filtro.
@@ -112,14 +120,14 @@ Executing examples and generating report outputs.
     plt.title('Magnitude\n do \nEspectro'), plt.xticks([]), plt.yticks([])
     plt.subplot(133), plt.imshow(img_reconstructed, cmap='gray')
     plt.title('Imagem\n Reconstruida'), plt.xticks([]), plt.yticks([])
-    plt.savefig("reconstrucao-da-imagem.png")
+    plt.savefig("output/reconstrucao-da-imagem.png")
     plt.show()
 
     # ==========MONTAGEM-DOS-FILTROS-E-FILTRAGEM================================
 
     nucleo_passa_baixa = apply_fourier_filter(spectrum, 0, 80)
     nucleo_passa_alta = apply_fourier_filter(spectrum, 80, 0)
-    nucleo_passa_faixa = apply_fourier_filter(spectrum, 40, 80)
+    nucleo_passa_faixa = apply_fourier_filter(spectrum, 20, 180)
 
     # Plotando as imagens obtidas.
     plt.subplot(131), plt.imshow(20 * np.ma.log(np.abs(nucleo_passa_baixa)).filled(0), cmap='gray')
@@ -128,7 +136,7 @@ Executing examples and generating report outputs.
     plt.title('Nucleo\nPassa\nAlta'), plt.xticks([]), plt.yticks([])
     plt.subplot(133), plt.imshow(20 * np.ma.log(np.abs(nucleo_passa_faixa)).filled(0), cmap='gray')
     plt.title('Nucleo\nPassa\nFaixa'), plt.xticks([]), plt.yticks([])
-    plt.savefig("nucleos.png")
+    plt.savefig("output/nucleos.png")
     plt.show()
 
     img_reconstructed_fpb = get_img_from_spectrum(nucleo_passa_baixa)
@@ -142,20 +150,41 @@ Executing examples and generating report outputs.
     plt.title('Filtragem\nPassa\nAlta'), plt.xticks([]), plt.yticks([])
     plt.subplot(133), plt.imshow(img_reconstructed_fpf, cmap='gray')
     plt.title('Filtragem\nPassa\nFaixa'), plt.xticks([]), plt.yticks([])
-    plt.savefig("filtragem.png")
+    plt.savefig("output/filtragem.png")
     plt.show()
 
     # ============COMPRESSAO====================================================
 
+    # Encontramos a componente de maior magnitude no espectro e removemos todas
+    # as que possuem magnitude inferior a 70% desta.
     max_spectrum = magnitude_spectrum.max()
     compressed_spectrum = np.where(magnitude_spectrum < 0.7 * max_spectrum, 0, spectrum)
 
     img_reconstructed_compressed = get_img_from_spectrum(compressed_spectrum)
 
     # Plotando as imagens obtidas.
-    plt.subplot(121), plt.imshow(img, cmap='gray')
+    plt.subplot(131), plt.imshow(img, cmap='gray')
     plt.title('Imagem\n de \nEntrada'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122), plt.imshow(img_reconstructed_compressed, cmap='gray')
+    plt.subplot(132), plt.imshow(20 * np.ma.log(np.abs(compressed_spectrum)).filled(0), cmap='gray')
+    plt.title('Magnitute\nEspectro\nComprimido'), plt.xticks([]), plt.yticks([])
+    plt.subplot(133), plt.imshow(img_reconstructed_compressed, cmap='gray')
     plt.title('Imagem\n Reconstruida \nCompressao'), plt.xticks([]), plt.yticks([])
-    plt.savefig("reconstrucao-da-imagem-compressed.png")
+    plt.savefig("output/reconstrucao-da-imagem-compressed.png")
+    plt.show()
+
+    # Encontramos a componente de maior magnitude no espectro e removemos todas
+    # as que possuem magnitude inferior a 80% desta.
+    max_spectrum = magnitude_spectrum.max()
+    compressed_spectrum = np.where(magnitude_spectrum < 0.8 * max_spectrum, 0, spectrum)
+
+    img_reconstructed_compressed = get_img_from_spectrum(compressed_spectrum)
+
+    # Plotando as imagens obtidas.
+    plt.subplot(131), plt.imshow(img, cmap='gray')
+    plt.title('Imagem\n de \nEntrada'), plt.xticks([]), plt.yticks([])
+    plt.subplot(132), plt.imshow(20 * np.ma.log(np.abs(compressed_spectrum)).filled(0), cmap='gray')
+    plt.title('Magnitute\nEspectro\nComprimido'), plt.xticks([]), plt.yticks([])
+    plt.subplot(133), plt.imshow(img_reconstructed_compressed, cmap='gray')
+    plt.title('Imagem\n Reconstruida \nCompressao'), plt.xticks([]), plt.yticks([])
+    plt.savefig("output/extra-reconstrucao-da-imagem-compressed.png")
     plt.show()
