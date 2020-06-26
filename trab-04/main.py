@@ -4,20 +4,6 @@ import cv2
 import numpy as np
 
 
-def erode(image_file_path, kernel, iterations=1):
-    img = cv2.imread(image_file_path, 0)
-    erosion = cv2.erode(img, kernel, iterations=iterations)
-
-    return erosion
-
-
-def dilate(image_file_path, kernel, iterations=1):
-    img = cv2.imread(image_file_path, 0)
-    dilation = cv2.dilate(img, kernel, iterations=iterations)
-
-    return dilation
-
-
 def imshow_components(labels):
     # Map component labels to hue val
     label_hue = np.uint8(179 * labels / np.max(labels))
@@ -48,47 +34,52 @@ Executing examples and generating report outputs.
     cv2.imshow("Imagem Original", cv2.imread("bitmap.pbm", 0))
     cv2.waitKey(0)
 
+    # Analisamos os pixels pretos, mas o OpenCV os considera valendo zero (ao 
+    # contrario da notacao por nos adotada). Entao fazemos o complemento da 
+    # imagem antes de qualquer procedimento.
+    cv2.imwrite("bitmap-complemento.pbm", 255 - cv2.imread("bitmap.pbm", 0))
+
     # ==============ITEM-1======================================================
-    imagem_dilatada = dilate("bitmap.pbm", np.ones((1, 100), np.uint8))
-    cv2.imshow("Item 1", imagem_dilatada)
+    imagem_dilatada_1 = cv2.dilate(cv2.imread("bitmap-complemento.pbm", 0), np.ones((1, 100), np.uint8))
+    cv2.imshow("Item 1", imagem_dilatada_1)
     cv2.waitKey(0)
-    cv2.imwrite("output/item1.pbm", imagem_dilatada)
+    cv2.imwrite("output/item1.pbm", imagem_dilatada_1)
 
     # ==============ITEM-2======================================================
-    imagem_erodida = erode("bitmap.pbm", np.ones((1, 100), np.uint8))
-    cv2.imshow("Item 2", imagem_erodida)
+    imagem_erodida_2 = cv2.erode(imagem_dilatada_1, np.ones((1, 100), np.uint8))
+    cv2.imshow("Item 2", imagem_erodida_2)
     cv2.waitKey(0)
-    cv2.imwrite("output/item2.pbm", imagem_erodida)
+    cv2.imwrite("output/item2.pbm", imagem_erodida_2)
 
     # ==============ITEM-3======================================================
-    imagem_dilatada = dilate("bitmap.pbm", np.ones((200, 1), np.uint8))
-    cv2.imshow("Item 3", imagem_dilatada)
+    imagem_dilatada_3 = cv2.dilate(cv2.imread("bitmap-complemento.pbm", 0), np.ones((200, 1), np.uint8))
+    cv2.imshow("Item 3", imagem_dilatada_3)
     cv2.waitKey(0)
-    cv2.imwrite("output/item3.pbm", imagem_dilatada)
+    cv2.imwrite("output/item3.pbm", imagem_dilatada_3)
 
     # ==============ITEM-4======================================================
-    imagem_erodida = erode("bitmap.pbm", np.ones((200, 1), np.uint8))
-    cv2.imshow("Item 4", imagem_erodida)
+    imagem_erodida_4 = cv2.erode(imagem_dilatada_3, np.ones((200, 1), np.uint8))
+    cv2.imshow("Item 4", imagem_erodida_4)
     cv2.waitKey(0)
-    cv2.imwrite("output/item4.pbm", imagem_erodida)
+    cv2.imwrite("output/item4.pbm", imagem_erodida_4)
 
     # ==============ITEM-5======================================================
-    imagem_and = imagem_erodida * imagem_dilatada
-    cv2.imshow("Item 5", imagem_and)
+    imagem_and_5 = imagem_erodida_4 * imagem_erodida_2
+    cv2.imshow("Item 5", imagem_and_5)
     cv2.waitKey(0)
-    cv2.imwrite("output/item5.pbm", imagem_and)
+    cv2.imwrite("output/item5.pbm", imagem_and_5)
 
     # ==============ITEM-6======================================================
-    imagem_closing = cv2.morphologyEx(imagem_and, cv2.MORPH_CLOSE, np.ones((1, 30), np.uint8))
-    cv2.imshow("Item 6", imagem_closing)
+    imagem_closing_6 = 255 * cv2.morphologyEx(imagem_and_5, cv2.MORPH_CLOSE, np.ones((1, 30), np.uint8))
+    cv2.imshow("Item 6", imagem_closing_6)
     cv2.waitKey(0)
-    cv2.imwrite("output/item6.pbm", imagem_closing)
+    cv2.imwrite("output/item6.pbm", imagem_closing_6)
 
     # ==============ITEM-7======================================================
     # Garante que a imagem eh binaria
-    imagem_closing = cv2.threshold(imagem_closing, 127, 255, cv2.THRESH_BINARY)[1]
-    n_connected_components, imagem_connected_components = cv2.connectedComponents(imagem_closing)
-    imagem_colorida_componentes = imshow_components(imagem_connected_components)
-    cv2.imshow("Item 7", imagem_colorida_componentes)
+    imagem_closing_7 = cv2.threshold(imagem_closing_6, 127, 255, cv2.THRESH_BINARY)[1]
+    n_connected_components_7, imagem_connected_components_7 = cv2.connectedComponents(imagem_closing_7)
+    imagem_colorida_componentes_7 = imshow_components(imagem_connected_components_7)
+    cv2.imshow("Item 7", imagem_colorida_componentes_7)
     cv2.waitKey(0)
-    cv2.imwrite("output/item7.pbm", imagem_colorida_componentes)
+    cv2.imwrite("output/item7.png", imagem_colorida_componentes_7)
