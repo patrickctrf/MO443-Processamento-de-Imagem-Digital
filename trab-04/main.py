@@ -14,6 +14,31 @@ def draw_bounding_boxes(image, contornos):
     return image
 
 
+def draw_text_non_text(image, contornos, text_lines_indexes):
+    for i, c in enumerate(contornos):
+        rect = cv2.boundingRect(c)
+        x, y, w, h = rect
+        image = cv2.rectangle(image, (x, y), (x + w, y + h), (255, 255, 255), 1)
+
+        if i in text_lines_indexes:
+            image = cv2.putText(image, "TEXTO", (x - 40, y + h - 10), 0, 0.3, (255, 255, 255))
+        else:
+            image = cv2.putText(image, "NAO-TEXTO", (x - 60, y + h - 10), 0, 0.3, (255, 255, 255))
+
+    return image
+
+
+def draw_only_text(image, contornos, text_lines_indexes):
+    for i, c in enumerate(contornos):
+        if i in text_lines_indexes:
+            rect = cv2.boundingRect(c)
+            x, y, w, h = rect
+            image = cv2.rectangle(image, (x, y), (x + w, y + h), (255, 255, 255), 1)
+            image = cv2.putText(image, " ", (x - 40, y + h - 10), 0, 0.3, (255, 255, 255))
+
+    return image
+
+
 def get_ratios(image, contornos):
     # Salvamos as porcentagens de cada parametro.
     list_black_percentiles = []
@@ -29,7 +54,7 @@ def get_ratios(image, contornos):
         img_snip = np.where(img_snip == 0, 0, 1)
 
         # Percentual entre pixels pretos e totais
-        black_pixels = np.count_nonzero(img_snip != 0)
+        black_pixels = np.count_nonzero(img_snip)
         total_pixels = w * h
         list_black_percentiles.append(black_pixels / total_pixels)
 
@@ -51,6 +76,13 @@ def get_ratios(image, contornos):
             list_transitions.append(0)
 
     return list_black_percentiles, list_transitions
+
+
+def text_identifier(list_black_percentiles, list_transitions):
+    lbp = np.array(list_black_percentiles)
+    ltr = np.array(list_transitions)
+
+    return np.where((lbp < 0.9) & (lbp > 0.3) & (lbp > ltr) & (ltr < 0.4))[0]
 
 
 if __name__ == '__main__':
@@ -110,8 +142,8 @@ Executing examples and generating report outputs.
     cv2.imwrite("output/item6.pbm", imagem_closing_6)
 
     # ==============ITEM-7======================================================
-    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    imagem_componentes_conexos_contornados_7 = imagem_closing_6
+    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagem_componentes_conexos_contornados_7 = imagem_closing_6.copy()
     imagem_componentes_conexos_contornados_7 = draw_bounding_boxes(imagem_componentes_conexos_contornados_7, contornos)
 
     n_contornos_item_7 = len(contornos)
@@ -121,6 +153,44 @@ Executing examples and generating report outputs.
     cv2.imwrite("output/item7.pbm", imagem_componentes_conexos_contornados_7)
 
     # ==============ITEM-8======================================================
-    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    imagem_componentes_conexos_contornados_7 = imagem_closing_6
-    list_black_percentiles_item_8, list_transitions_item_8 = get_ratios(imagem_componentes_conexos_contornados_7, contornos)
+    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagem_componentes_conexos_contornados_8 = imagem_closing_6.copy()
+    list_black_percentiles_item_8, list_transitions_item_8 = get_ratios(imagem_componentes_conexos_contornados_8, contornos)
+
+    # ==============ITEM-9======================================================
+    text_lines_indexes = text_identifier(list_black_percentiles_item_8, list_transitions_item_8)
+
+    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagem_componentes_conexos_contornados_9a = imagem_closing_6.copy()
+    imagem_componentes_conexos_contornados_9a = draw_text_non_text(imagem_componentes_conexos_contornados_9a, contornos, text_lines_indexes)
+
+    print("Número de linhas na imagem: " + str(len(text_lines_indexes)))
+    cv2.imshow("Item 9 Componente Conexo", imagem_componentes_conexos_contornados_9a)
+    cv2.waitKey(0)
+    cv2.imwrite("output/item9-connected-component.pbm", imagem_componentes_conexos_contornados_9a)
+
+    contornos, hierarquia = cv2.findContours(imagem_closing_6, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagem_componentes_conexos_contornados_9b = cv2.imread("bitmap-complemento.pbm", 0).copy()
+    imagem_componentes_conexos_contornados_9b = draw_only_text(imagem_componentes_conexos_contornados_9b, contornos, text_lines_indexes)
+
+    cv2.imshow("Item 9 Imagem Original", imagem_componentes_conexos_contornados_9b)
+    cv2.waitKey(0)
+    cv2.imwrite("output/item9-original-text.pbm", imagem_componentes_conexos_contornados_9b)
+
+    # ==============ITEM-10======================================================
+
+
+    # ==============TXT-OUTPUTS=================================================
+    with open("output/list_black_percentiles.txt", "w") as file:
+        for item in list_black_percentiles_item_8:
+            file.write(str(item) + "\n")
+
+    with open("output/list_transitions.txt", "w") as file:
+        for item in list_transitions_item_8:
+            file.write(str(item) + "\n")
+
+    with open("output/n_contornos_item_7.txt", "w") as file:
+        file.write(str(n_contornos_item_7) + "\n")
+
+    with open("output/n_linhas_texto.txt", "w") as file:
+        file.write(str(len(text_lines_indexes)) + "\n")
