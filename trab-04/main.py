@@ -82,7 +82,7 @@ def text_identifier(list_black_percentiles, list_transitions):
     lbp = np.array(list_black_percentiles)
     ltr = np.array(list_transitions)
 
-    return np.where((lbp < 0.9) & (lbp > 0.3) & (lbp > ltr) & (ltr < 0.4))[0]
+    return np.where((lbp < 0.98) & (lbp > 0.3) & (lbp > ltr) & (ltr < 0.4))[0]
 
 
 if __name__ == '__main__':
@@ -177,8 +177,30 @@ Executing examples and generating report outputs.
     cv2.waitKey(0)
     cv2.imwrite("output/item9-original-text.pbm", imagem_componentes_conexos_contornados_9b)
 
-    # ==============ITEM-10======================================================
+    # ==============ITEM-10=====================================================
+    imagem_closing_10 = cv2.imread("bitmap-complemento.pbm", 0)
+    for i in range(1):
+        imagem_closing_10 = cv2.dilate(imagem_closing_10, np.ones((6, 2), np.uint8), iterations=1)
+        imagem_closing_10 = cv2.morphologyEx(imagem_closing_10, cv2.MORPH_CLOSE, np.ones((6, 4), np.uint8), iterations=3)
+        # imagem_closing_10 = cv2.morphologyEx(imagem_closing_10, cv2.MORPH_OPEN, np.ones((6, 3), np.uint8), iterations=3)
+        imagem_closing_10 = imagem_closing_10/255 * imagem_closing_6
+        # imagem_closing_10 = cv2.morphologyEx(cv2.imread("bitmap-complemento.pbm", 0), cv2.MORPH_CLOSE, np.ones((2, 4), np.uint8), iterations=6)
+        # imagem_closing_10 = cv2.morphologyEx(imagem_closing_10, cv2.MORPH_OPEN, np.ones((6, 3), np.uint8), iterations=3)
+        # imagem_closing_10 = cv2.
 
+    imagem_closing_10 = imagem_closing_10.astype(np.uint8)
+
+    contornos, hierarquia = cv2.findContours(imagem_closing_10, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imagem_componentes_contornados_10 = imagem_closing_10.copy()
+    list_black_percentiles_item_10, list_transitions_item_10 = get_ratios(imagem_componentes_contornados_10, contornos)
+
+    text_lines_indexes_10 = text_identifier(list_black_percentiles_item_10, list_transitions_item_10)
+
+    imagem_closing_10_contornos = imagem_closing_10.copy()
+    imagem_closing_10_contornos = draw_only_text(cv2.imread("bitmap-complemento.pbm", 0), contornos, text_lines_indexes_10)
+    cv2.imshow("Item 10", imagem_closing_10_contornos)
+    cv2.waitKey(0)
+    cv2.imwrite("output/item10.pbm", imagem_closing_10_contornos)
 
     # ==============TXT-OUTPUTS=================================================
     with open("output/list_black_percentiles.txt", "w") as file:
