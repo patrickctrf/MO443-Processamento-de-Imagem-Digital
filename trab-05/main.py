@@ -80,22 +80,22 @@ Executing examples and generating report outputs.
 
     # ==============ITEM-2======================================================
 
-    img, _, _ = keypoints_and_descriptors(images_a[0], method="sift")
-    cv2.imshow('Pontos de interesse', img)
-    cv2.waitKey(0)
-    cv2.imwrite("output/item2_sift.jpg", img)
+    metodos_a_testar = ["sift", "surf", "brief", "orb"]
+    img_kp_des_a = []
+    img_kp_des_b = []
 
-    img, _, _ = keypoints_and_descriptors(images_a[0], method="surf")
-    cv2.imshow('Pontos de interesse', img)
-    cv2.waitKey(0)
-    cv2.imwrite("output/item2_surf.jpg", img)
+    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+        for metodo in metodos_a_testar:
+            img, keypoints, descriptors = keypoints_and_descriptors(img_a, method=metodo)
+            cv2.imshow('Pontos de interesse', img)
+            cv2.waitKey(0)
+            cv2.imwrite("output/item2_A_" + str(metodo) + ".jpg", img)
+            img_kp_des_a.append(img, keypoints, descriptors)
 
-    img, _, _ = keypoints_and_descriptors(images_a[0], method="brief")
-    cv2.imshow('Pontos de interesse', img)
-    cv2.waitKey(0)
-    cv2.imwrite("output/item2_brief.jpg", img)
-
-    img, _, _ = keypoints_and_descriptors(images_a[0], method="orb")
-    cv2.imshow('Pontos de interesse', img)
-    cv2.waitKey(0)
-    cv2.imwrite("output/item2_orb.jpg", img)
+            img, keypoints, descriptors = keypoints_and_descriptors(img_b, method=metodo)
+            cv2.imshow('Pontos de interesse', img)
+            cv2.waitKey(0)
+            cv2.imwrite("output/item2_B_" + str(metodo) + ".jpg", img)
+            img_kp_des_b.append(img, keypoints, descriptors)
+            
+    
