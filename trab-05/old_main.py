@@ -1,8 +1,7 @@
 import os
 
 import cv2
-from numpy import array, std
-from sklearn.preprocessing import MinMaxScaler
+from numpy import array
 
 
 def open_images_grayscale(n_images):
@@ -62,29 +61,15 @@ Recebe uma imagem do cv2 e um método de detector como argumentos. Encontra desc
 
 def select_best_matches(matches, limiar=0.2):
 
-    if len(matches) == 0:
-        return []
-
     good_matches = []
-    aux_list = []
     max_distance = 0
-    soma_distance = 0
 
     for single_match in matches:
-        aux_list.append(single_match.distance)
         if single_match.distance > max_distance:
             max_distance = single_match.distance
-            soma_distance += single_match.distance
-
-    distances_array = array(aux_list)
-
-    # fit scaler
-    scaler = MinMaxScaler(feature_range=(-1, 1))
-    scaler = scaler.fit(distances_array.reshape(-1, 1))
-    scaled_distances = scaler.transform(distances_array.reshape(-1, 1))
 
     for single_match in matches:
-        if scaler.transform(array(single_match.distance).reshape(-1, 1)) < limiar - 1:
+        if single_match.distance/max_distance < limiar:
             good_matches.append(single_match)
 
     return good_matches
@@ -142,33 +127,21 @@ Executing examples and generating report outputs.
             matches = bf.match(descriptors1, descriptors2)
             matches = sorted(matches, key=lambda x: x.distance)
 
-            img = cv2.drawMatches(img_a, keypoints1, img_b, keypoints2, matches[:int(0.25*len(matches))],
+            if metodo == "sift":
+                matches = select_best_matches(matches, limiar=0.1)
+
+            if metodo == "brief":
+                matches = select_best_matches(matches, limiar=0.3)
+
+            if metodo == "orb":
+                matches = select_best_matches(matches, limiar=0.2)
+
+            if metodo == "surf":
+                matches = select_best_matches(matches, limiar=0.2)
+
+            img = cv2.drawMatches(img_a, keypoints1, img_b, keypoints2, matches[:],
                                   None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
             # cv2.imshow('Distancias ' + str(metodo), img)
             # cv2.waitKey(0)
             cv2.imwrite("output/item3_foto" + str(i + 1) + str(metodo) + ".jpg", img)
-
-            # if metodo == "sift":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "brief":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "orb":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "surf":
-            #     matches = select_best_matches(matches, limiar=0.2)
-
-            # if metodo == "sift":
-            #     matches = select_best_matches(matches, limiar=20)
-            #
-            # if metodo == "brief":
-            #     matches = select_best_matches(matches, limiar=15)
-            #
-            # if metodo == "orb":
-            #     matches = select_best_matches(matches, limiar=35)
-            #
-            # if metodo == "surf":
-            #     matches = select_best_matches(matches, limiar=0.1)
