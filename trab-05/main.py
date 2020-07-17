@@ -205,6 +205,9 @@ Executing examples and generating report outputs.
             img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
             img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
 
+            img1 = img_a
+            img2 = img_b
+
             if metodo == "sift" or metodo == "surf":
                 bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 
@@ -221,22 +224,21 @@ Executing examples and generating report outputs.
                 dst_pts = float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
                 M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
 
-                h1, w1, _ = img1.shape
-                h2, w2, _ = img2.shape
+                h1, w1 = img1.shape
+                h2, w2 = img2.shape
                 warp1 = cv2.warpPerspective(img1, M, (w1 + w2, h2))
 
-                cv2.imshow('Pontos de interesse ' + str(metodo), warp1)
-                cv2.waitKey(0)
+                cv2.imwrite("output/item6_foto" + str(i + 1) + str(metodo) + ".jpg", warp1)
 
+                # ==============ITEM-7==========================================
+                # https://docs.opencv.org/2.4/modules/imgproc/doc/geometric_transformations.html#void%20warpPerspective(InputArray%20src,%20OutputArray%20dst,%20InputArray%20M,%20Size%20dsize,%20int%20flags,%20int%20borderMode,%20const%20Scalar&%20borderValue)
                 print('warp 1 ', warp1.shape)
                 print('img1 ', img1.shape)
                 print('img2 ', img2.shape)
 
                 warp1[0:h2, 0:w2] = img2
 
-                cv2.imshow('Pontos de interesse ' + str(metodo), warp1)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+                cv2.imwrite("output/item7_foto" + str(i + 1) + str(metodo) + ".jpg", warp1)
 
     # ==============ITEM-8======================================================
     # https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
