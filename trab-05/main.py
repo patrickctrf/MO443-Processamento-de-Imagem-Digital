@@ -1,7 +1,7 @@
 import os
 
 import cv2
-from numpy import array, std
+from numpy import array, float32
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -61,7 +61,6 @@ Recebe uma imagem do cv2 e um método de detector como argumentos. Encontra desc
 
 
 def select_best_matches(matches, limiar=0.2):
-
     if len(matches) == 0:
         return []
 
@@ -125,6 +124,7 @@ Executing examples and generating report outputs.
             img_kp_des_b.append((img2, keypoints2, descriptors2))
 
     # ==============ITEM-3======================================================
+    # https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
     metodos_a_testar = ["sift", "surf", "brief", "orb"]
     distances = []
 
@@ -142,33 +142,124 @@ Executing examples and generating report outputs.
             matches = bf.match(descriptors1, descriptors2)
             matches = sorted(matches, key=lambda x: x.distance)
 
-            img = cv2.drawMatches(img_a, keypoints1, img_b, keypoints2, matches[:int(0.25*len(matches))],
+    # ==============ITEM-4======================================================
+    # https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
+    metodos_a_testar = ["sift", "surf", "brief", "orb"]
+    distances = []
+
+    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+        for metodo in metodos_a_testar:
+            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+
+            if metodo == "sift" or metodo == "surf":
+                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+            if metodo == "orb" or metodo == "brief":
+                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+            matches = bf.match(descriptors1, descriptors2)
+            matches = sorted(matches, key=lambda x: x.distance)
+
+            for single_match in matches[:int(0.25 * len(matches))]:
+                print("Foto:", i, ". Método:", metodo, ". Distância: ", single_match.distance)
+
+    # ==============ITEM-5======================================================
+    # https://docs.opencv.org/master/d1/de0/tutorial_py_feature_homography.html
+    metodos_a_testar = ["sift", "surf", "brief", "orb"]
+    distances = []
+
+    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+        for metodo in metodos_a_testar:
+            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+
+            if metodo == "sift" or metodo == "surf":
+                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+            if metodo == "orb" or metodo == "brief":
+                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+            matches = bf.match(descriptors1, descriptors2)
+            matches = sorted(matches, key=lambda x: x.distance)
+
+            MIN_MATCH_COUNT = 4
+
+            if len(matches) > MIN_MATCH_COUNT:
+                src_pts = float32([keypoints1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+                dst_pts = float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
+                M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+                print("\nFoto:", i + 1, ". Método:", metodo, ". Matriz: \n", M)
+
+            else:
+                print("\nFoto:", i + 1, ". Método:", metodo, ". Não foram encontradas similaridades suficientes - {}/{}".format(len(matches), MIN_MATCH_COUNT))
+                matchesMask = None
+
+    # ==============ITEM-6======================================================
+    # https://docs.opencv.org/master/d1/de0/tutorial_py_feature_homography.html
+    metodos_a_testar = ["sift", "surf", "brief", "orb"]
+    distances = []
+
+    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+        for metodo in metodos_a_testar:
+            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+
+            if metodo == "sift" or metodo == "surf":
+                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+            if metodo == "orb" or metodo == "brief":
+                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+            matches = bf.match(descriptors1, descriptors2)
+            matches = sorted(matches, key=lambda x: x.distance)
+
+            MIN_MATCH_COUNT = 4
+
+            if len(matches) > MIN_MATCH_COUNT:
+                src_pts = float32([keypoints1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+                dst_pts = float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
+                M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+
+                h1, w1, _ = img1.shape
+                h2, w2, _ = img2.shape
+                warp1 = cv2.warpPerspective(img1, M, (w1 + w2, h2))
+
+                cv2.imshow('Pontos de interesse ' + str(metodo), warp1)
+                cv2.waitKey(0)
+
+                print('warp 1 ', warp1.shape)
+                print('img1 ', img1.shape)
+                print('img2 ', img2.shape)
+
+                warp1[0:h2, 0:w2] = img2
+
+                cv2.imshow('Pontos de interesse ' + str(metodo), warp1)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+    # ==============ITEM-8======================================================
+    # https://docs.opencv.org/3.4/dc/dc3/tutorial_py_matcher.html
+    metodos_a_testar = ["sift", "surf", "brief", "orb"]
+    distances = []
+
+    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+        for metodo in metodos_a_testar:
+            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+
+            if metodo == "sift" or metodo == "surf":
+                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+
+            if metodo == "orb" or metodo == "brief":
+                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+            matches = bf.match(descriptors1, descriptors2)
+            matches = sorted(matches, key=lambda x: x.distance)
+
+            img = cv2.drawMatches(img_a, keypoints1, img_b, keypoints2, matches[:int(0.25 * len(matches))],
                                   None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
             # cv2.imshow('Distancias ' + str(metodo), img)
             # cv2.waitKey(0)
-            cv2.imwrite("output/item3_foto" + str(i + 1) + str(metodo) + ".jpg", img)
-
-            # if metodo == "sift":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "brief":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "orb":
-            #     matches = select_best_matches(matches, limiar=0.2)
-            #
-            # if metodo == "surf":
-            #     matches = select_best_matches(matches, limiar=0.2)
-
-            # if metodo == "sift":
-            #     matches = select_best_matches(matches, limiar=20)
-            #
-            # if metodo == "brief":
-            #     matches = select_best_matches(matches, limiar=15)
-            #
-            # if metodo == "orb":
-            #     matches = select_best_matches(matches, limiar=35)
-            #
-            # if metodo == "surf":
-            #     matches = select_best_matches(matches, limiar=0.1)
+            cv2.imwrite("output/item8_foto" + str(i + 1) + str(metodo) + ".jpg", img)
