@@ -147,53 +147,58 @@ Executing examples and generating report outputs.
     metodos_a_testar = ["sift", "surf", "brief", "orb"]
     distances = []
 
-    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
-        for metodo in metodos_a_testar:
-            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
-            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+    with open('output/item4.txt', 'w') as file:
+        for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+            for metodo in metodos_a_testar:
+                img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+                img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
 
-            if metodo == "sift" or metodo == "surf":
-                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+                if metodo == "sift" or metodo == "surf":
+                    bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 
-            if metodo == "orb" or metodo == "brief":
-                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+                if metodo == "orb" or metodo == "brief":
+                    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
-            matches = bf.match(descriptors1, descriptors2)
-            matches = sorted(matches, key=lambda x: x.distance)
+                matches = bf.match(descriptors1, descriptors2)
+                matches = sorted(matches, key=lambda x: x.distance)
 
-            for single_match in matches[:int(0.25 * len(matches))]:
-                print("Foto:", i, ". Método:", metodo, ". Distância: ", single_match.distance)
+                for single_match in matches[:int(0.25 * len(matches))]:
+                    print("Foto:", i + 1, ". Método:", metodo, ". Distância: ", single_match.distance)
+                    file.write("\nFoto: " + str(i + 1) + ". Método: " + str(metodo) + ". Distância: " + str(single_match.distance))
 
     # ==============ITEM-5======================================================
     # https://docs.opencv.org/master/d1/de0/tutorial_py_feature_homography.html
     metodos_a_testar = ["sift", "surf", "brief", "orb"]
     distances = []
 
-    for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
-        for metodo in metodos_a_testar:
-            img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
-            img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
+    with open('output/item5.txt', 'w') as file:
+        for i, (img_a, img_b) in enumerate(zip(images_a, images_b)):
+            for metodo in metodos_a_testar:
+                img1, keypoints1, descriptors1 = keypoints_and_descriptors(img_a, method=metodo)
+                img2, keypoints2, descriptors2 = keypoints_and_descriptors(img_b, method=metodo)
 
-            if metodo == "sift" or metodo == "surf":
-                bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+                if metodo == "sift" or metodo == "surf":
+                    bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
 
-            if metodo == "orb" or metodo == "brief":
-                bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+                if metodo == "orb" or metodo == "brief":
+                    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
-            matches = bf.match(descriptors1, descriptors2)
-            matches = sorted(matches, key=lambda x: x.distance)
+                matches = bf.match(descriptors1, descriptors2)
+                matches = sorted(matches, key=lambda x: x.distance)
 
-            MIN_MATCH_COUNT = 4
+                MIN_MATCH_COUNT = 4
 
-            if len(matches) > MIN_MATCH_COUNT:
-                src_pts = float32([keypoints1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
-                dst_pts = float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
-                M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-                print("\nFoto:", i + 1, ". Método:", metodo, ". Matriz: \n", M)
+                if len(matches) > MIN_MATCH_COUNT:
+                    src_pts = float32([keypoints1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
+                    dst_pts = float32([keypoints2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
+                    M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+                    print("\nFoto:", i + 1, ". Método:", metodo, ". Matriz: \n", M)
+                    file.write("\n\nFoto: " + str(i + 1) + ". Método: " + str(metodo) + ". Matriz: \n" + str(M))
 
-            else:
-                print("\nFoto:", i + 1, ". Método:", metodo, ". Não foram encontradas similaridades suficientes - {}/{}".format(len(matches), MIN_MATCH_COUNT))
-                matchesMask = None
+                else:
+                    print("\nFoto:", i + 1, ". Método:", metodo, ". Não foram encontradas similaridades suficientes - {}/{}".format(len(matches), MIN_MATCH_COUNT))
+                    file.write("\n\nFoto: " + str(i + 1) + ". Método: " + str(metodo) + ". Não foram encontradas similaridades suficientes - {}/{}".format(len(matches), MIN_MATCH_COUNT))
+                    matchesMask = None
 
     # ==============ITEM-6======================================================
     # https://docs.opencv.org/master/d1/de0/tutorial_py_feature_homography.html
